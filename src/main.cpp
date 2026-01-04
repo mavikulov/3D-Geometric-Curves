@@ -10,15 +10,19 @@
 #include "CurveType.h"
 
 
-std::vector<std::shared_ptr<Curve3D>> ParseFile(std::ifstream& f) {
-	std::vector<std::shared_ptr<Curve3D>> result;
-	size_t count;
-	f >> count;
+std::vector<std::shared_ptr<Curve3D>> ParseFile(std::ifstream& file) {
+	std::vector<std::shared_ptr<Curve3D>> curves;
+
+	std::size_t count = 0;
+	file >> count;
+
 	std::string line;
-	std::getline(f, line);
+	std::getline(file, line);
+
 	for (size_t i = 1; i < count; ++i) {
-		std::getline(f, line);
+		std::getline(file, line);
 		std::istringstream iss(line);
+
 		char type;
 		long long id;
 		iss >> type >> id;
@@ -31,33 +35,38 @@ std::vector<std::shared_ptr<Curve3D>> ParseFile(std::ifstream& f) {
 		iss >> x >> y >> z;
 		Point3D center{ x, y, z };
 
-		CurveType curveType = ParseCurveType(type);
 		try {
-			switch (curveType) {
+			switch (ParseCurveType(type)) {
 			case CurveType::Circle: {
 				double radius;
 				iss >> radius;
-				result.push_back(
+
+				curves.push_back(
 					std::make_shared<Circle>(id, name, center, radius)
 				);
 				break;
 			}
+
 			case CurveType::Ellipse: {
 				double a, b;
 				iss >> a >> b;
-				result.push_back(
+
+				curves.push_back(
 					std::make_shared<Ellipse>(id, name, center, a, b)
 				);
 				break;
 			}
+
 			case CurveType::Helix: {
 				double radius, step;
 				iss >> radius >> step;
-				result.push_back(
+
+				curves.push_back(
 					std::make_shared<Helix>(id, name, center, radius, step)
 				);
 				break;
 			}
+
 			default:
 				std::cerr << "Unknown curve type: " << type << std::endl;
 				break;
@@ -68,7 +77,12 @@ std::vector<std::shared_ptr<Curve3D>> ParseFile(std::ifstream& f) {
 			std::cerr << "Error creating curve (id=" << id << "): " << e.what() << std::endl;
 		}
 	}
-	return result;
+	return curves;
+}
+
+
+void PrintSeparator(std::size_t width = 120) {
+	std::cout << std::string(width, '-') << '\n';
 }
 
 
@@ -87,10 +101,10 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 
-	std::cout << std::string(120, '-') << '\n';
+	PrintSeparator();
 	std::cout << "Task 1: Print ID, name, coordinates of points and derivatives"
-				 "at t=PI/4 for each curve in the container."
-			  << std::endl;
+				 "at t=PI/4 for each curve in the container.\n";
+
 	std::vector<std::shared_ptr<Curve3D>> curves = ParseFile(file);
 	constexpr double tparam = PI / 4.0;
 
@@ -101,10 +115,8 @@ int main(int argc, char* argv[]) {
 		std::cout << "\n";
 	}
 
-	std::cout << "\n\n";
-	std::cout << std::string(120, '-') << '\n';
-	std::cout << "Task 2: Sort the second container in the ascending order of circles radii."
-			  << std::endl;
+	PrintSeparator();
+	std::cout << "Task 2: Sort the second container in the ascending order of circles radii.\n";
 
 	std::vector<std::shared_ptr<Circle>> circles;
 	for (const auto& curve : curves) {
@@ -118,7 +130,9 @@ int main(int argc, char* argv[]) {
 		std::cout << "\t" << circle->GetName() << ", radius = " << circle->GetRadius() << std::endl;
 	}
 
-	std::sort(circles.begin(), circles.end(),
+	std::sort(
+		circles.begin(), 
+		circles.end(),
 		[](const auto& first, const auto& second) {
 			return first->GetRadius() < second->GetRadius();
 		});
@@ -128,9 +142,9 @@ int main(int argc, char* argv[]) {
 		std::cout << "\t" << circle->GetName() << ", radius = " << circle->GetRadius() << std::endl;
 	}
 
-	std::cout << "\n\n";
-	std::cout << std::string(120, '-') << '\n';
+	PrintSeparator();
 	std::cout << "Task 3: Compute the total sum of radii of all curves in the second container" << std::endl;
+
 	double sumRadius = std::accumulate(
 		circles.begin(),
 		circles.end(),
@@ -138,6 +152,7 @@ int main(int argc, char* argv[]) {
 		[](double sum, const auto& circle) {
 			return sum + circle->GetRadius();
 		});
+
 	std::cout << "Sum = " << sumRadius << std::endl;
 
     return 0;
