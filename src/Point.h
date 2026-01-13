@@ -4,10 +4,6 @@
 #include <sstream>
 
 class Point3D {
-	double x_;
-	double y_;
-	double z_;
-
 public:
 	Point3D() : x_(0.0), y_(0.0), z_(0.0) { }
 	Point3D(double x, double y, double z) : x_(x), y_(y), z_(z) { }
@@ -27,6 +23,11 @@ public:
 	Point3D operator+(const Point3D& other) const {
 		return { x_ + other.x_, y_ + other.y_, z_ + other.z_ };
 	}
+
+private:
+	double x_;
+	double y_;
+	double z_;
 };
 
 std::ostream& operator <<(std::ostream& output, const Point3D& point) {

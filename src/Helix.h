@@ -6,9 +6,6 @@
 constexpr double PI = 3.14159265358979323846;
 
 class Helix : public Curve3D {
-private:
-	double radius_, step_;
-
 public:
 	Helix(long long id,
 		  const std::string& name,
@@ -31,6 +28,9 @@ public:
 	Point3D GetFirstDerivative(double t) const override {
 		return { -radius_ * std::sin(t), radius_ * std::cos(t), step_ / (2 * PI) };
 	}
+
+private:
+	double radius_, step_;
 };
 
 #endif // !HELIX_H

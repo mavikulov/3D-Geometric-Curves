@@ -4,9 +4,6 @@
 #include "Curve3D.h"
 
 class Ellipse : public Curve3D {
-private:
-	double a_, b_; // a - radius along the X, b - radius along the Y
-
 public:
 	Ellipse(long long id,
 			const std::string& name,
@@ -29,6 +26,9 @@ public:
 	Point3D GetFirstDerivative(double t) const override {
 		return { -a_ * std::sin(t), b_ * std::cos(t), 0.0 };
 	}
+
+private:
+	double a_, b_; // a - radius along the X, b - radius along the Y
 };
 
 #endif // !ELLIPSE_H
