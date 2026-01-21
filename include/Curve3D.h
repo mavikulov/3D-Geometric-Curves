@@ -9,21 +9,11 @@
 
 class Curve3D {
 public:
-	Curve3D(long long id, const std::string& name, const Point3D& center)
-		: id_(id), name_(name), center_(center) {
-	}
+	Curve3D(long long id, const std::string& name, const Point3D& center);
 
-	long long GetId() const {
-		return id_;
-	}
-
-	const std::string& GetName() const {
-		return name_;
-	}
-
-	const Point3D& GetCenter() const {
-		return center_;
-	}
+	long long GetId() const;
+	const std::string& GetName() const;
+	const Point3D& GetCenter() const;
 
 	virtual ~Curve3D() = default;
 	virtual Point3D GetPoint(double t) const = 0;
